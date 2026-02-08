@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Website Blocked</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 90%;
+    }
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #dc3545;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .continue-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+    .continue-btn:hover {
+      background-color: #c82333;
+    }
+    .back-btn {
+      background-color: #6c757d;
+      color: white;
+    }
+    .back-btn:hover {
+      background-color: #5a6268;
+    }
+    .settings-btn {
+      background-color: #007bff;
+      color: white;
+    }
+    .settings-btn:hover {
+      background-color: #0056b3;
+    }
+    .timer {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+    }
+    .timer-display {
+      font-size: 24px;
+      font-weight: bold;
+      color: #495057;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🚫</div>
+    <h1>Website Blocked</h1>
+    <p>This website has been blocked to help you stay focused and productive.</p>
+    
+    <div class="button-group">
+      <button class="continue-btn" id="continueBtn">Continue Anyway</button>
+      <button class="back-btn" id="backBtn">Go Back</button>
+      <button class="settings-btn" id="settingsBtn">Settings</button>
+    </div>
+
+    <div class="timer">
+      <div id="quote">Take a deep breath and reconsider...</div>
+      <div class="timer-display" id="timer">30</div>
+    </div>
+  </div>
+
+  <script src="blocked.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Website Blocker Options</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .section h2 {
+      margin-top: 0;
+      color: #555;
+    }
+    .input-group {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    button {
+      padding: 8px 15px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .add-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .remove-btn {
+      background-color: #f44336;
+      color: white;
+    }
+    .site-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .site-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    .site-item:last-child {
+      border-bottom: none;
+    }
+    .empty-message {
+      color: #666;
+      font-style: italic;
+    }
+    .import-export {
+      margin-top: 15px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin: 10px 0;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 3px;
+      display: none;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <h1>Website Blocker Options</h1>
+
+  <div class="section">
+    <h2>Blocked Websites</h2>
+    <p>Add websites you want to block. You can use domain names like "facebook.com" or "*.com" to block all .com domains.</p>
+    
+    <div class="input-group">
+      <input type="text" id="siteInput" placeholder="Enter website (e.g., facebook.com)">
+      <button class="add-btn" id="addSiteBtn">Block Site</button>
+    </div>
+
+    <div class="site-list" id="siteList">
+      <div class="empty-message">No blocked sites yet</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Import/Export</h2>
+    <p>Export your blocked sites list or import from a text file (one site per line).</p>
+    
+    <div class="import-export">
+      <button id="exportBtn">Export Sites</button>
+      <button id="importBtn">Import Sites</button>
+      
+      <div id="importArea" style="display: none;">
+        <textarea id="importText" placeholder="Paste sites here (one per line)"></textarea>
+        <button id="importConfirmBtn">Import</button>
+        <button id="importCancelBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
