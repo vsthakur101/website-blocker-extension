@@ -1,24 +1,42 @@
+const TEMP_ALLOW_MINUTES = 10;
+
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
   if (details.frameId !== 0) return;
+  if (!details.url || isInternalUrl(details.url)) return;
 
-  chrome.storage.sync.get(['blockedSites'], (result) => {
-    const blockedSites = (result.blockedSites || []).map(normalizeSite).filter(Boolean);
-    const url = new URL(details.url);
-    const hostname = url.hostname.toLowerCase();
+  const hostname = getHostname(details.url);
+  if (!hostname) return;
 
-    const isBlocked = blockedSites.some(site => {
-      if (site.startsWith('*.')) {
-        const domain = site.substring(2);
-        return hostname === domain || hostname.endsWith('.' + domain);
-      }
-      return hostname === site || hostname.endsWith('.' + site);
-    });
+  chrome.storage.session.get(['temporaryAllowList'], (sessionResult) => {
+    const allowList = sessionResult.temporaryAllowList || {};
+    const now = Date.now();
+    const allowUntil = allowList[hostname];
 
-    if (isBlocked) {
-      chrome.tabs.update(details.tabId, {
-        url: chrome.runtime.getURL('blocked.html')
-      });
+    if (allowUntil && allowUntil > now) {
+      return;
     }
+
+    if (allowUntil && allowUntil <= now) {
+      delete allowList[hostname];
+      chrome.storage.session.set({ temporaryAllowList: allowList });
+    }
+
+    chrome.storage.sync.get(['blockedSites'], (result) => {
+      const blockedSites = (result.blockedSites || []).map(normalizeSite).filter(Boolean);
+
+      const isBlocked = blockedSites.some(site => {
+        if (site.startsWith('*.')) {
+          const domain = site.substring(2);
+          return hostname === domain || hostname.endsWith('.' + domain);
+        }
+        return hostname === site || hostname.endsWith('.' + site);
+      });
+
+      if (isBlocked) {
+        const target = chrome.runtime.getURL(`blocked.html?original=${encodeURIComponent(details.url)}`);
+        chrome.tabs.update(details.tabId, { url: target });
+      }
+    });
   });
 });
 
@@ -63,6 +81,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true;
   }
+
+  if (request.action === 'allowTemporarySite') {
+    const hostname = getHostname(request.url || request.hostname);
+    if (!hostname) {
+      sendResponse({ success: false, error: 'Invalid hostname' });
+      return false;
+    }
+
+    chrome.storage.session.get(['temporaryAllowList'], (sessionResult) => {
+      const allowList = sessionResult.temporaryAllowList || {};
+      const expiresAt = Date.now() + TEMP_ALLOW_MINUTES * 60 * 1000;
+      allowList[hostname] = expiresAt;
+      chrome.storage.session.set({ temporaryAllowList: allowList }, () => {
+        sendResponse({ success: true, hostname, expiresAt });
+      });
+    });
+    return true;
+  }
 });
 
 function normalizeSite(value) {
@@ -73,4 +109,22 @@ function normalizeSite(value) {
   const withoutProtocol = raw.replace(/^https?:\/\//, '');
   const withoutPath = withoutProtocol.split('/')[0];
   return withoutPath.replace(/^\.+/, '').replace(/\.+$/, '');
+}
+
+function getHostname(value) {
+  if (!value) return '';
+
+  try {
+    if (value.includes('://')) {
+      return new URL(value).hostname.toLowerCase();
+    }
+  } catch (error) {
+    return normalizeSite(value);
+  }
+
+  return normalizeSite(value);
+}
+
+function isInternalUrl(url) {
+  return url.startsWith('chrome-extension://') || url.startsWith('chrome://');
 }

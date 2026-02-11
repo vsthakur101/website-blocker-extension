@@ -16,7 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('continueBtn').addEventListener('click', () => {
     if (originalUrl) {
-      navigateToUrl(originalUrl);
+      chrome.runtime.sendMessage(
+        { action: 'allowTemporarySite', url: originalUrl },
+        () => navigateToUrl(originalUrl)
+      );
     } else {
       goBack();
     }
